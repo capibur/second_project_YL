@@ -5,16 +5,16 @@ class DBManager:
     def __init__(self, name):
         self.name = name
 
-    def set_save(self, location, inventory: list, save_name):
+    def set_saves(self, location, inventory: list, save_name, morders,score):
         self.request(f"""
-        INSERT INTO save_list ( location, save_date, save_name)
-        VALUES ("{location}", date('now','localtime'), "{save_name}");""")
+        INSERT INTO save_list ( location, save_date, save_name, morders, score)
+        VALUES ("{location}", date('now','localtime'), "{save_name}"), {morders}, {score};""")
         for thing in inventory:
             self.request(f"""
                     INSERT INTO in_game (name, save)
                     VALUES ("{thing.get_name(thing)}", "{save_name}");""")
 
-    def get_saves(self, save_name, mode=False):  # при mode = true возвращается словарь с характеристики
+    def get_saves(self, save_name, mode=False):  # при mode = true возвращается словарь с характеристиками
         inventory = [i[0] for i in self.request(f"""               
         SELECT name FROM in_game WHERE save = "{save_name}"
         """)]
@@ -53,6 +53,13 @@ class DBManager:
 
     def complete(self, achievement):
         self.request(f"""UPDATE achievement_list SET achieved = 0 WHERE name = "{achievement}" """)
+    def get_img(self, thing_name):
+        try:
+            return self.request(f"""               
+                    SELECT * FROM things WHERE name = "{thing_name}"
+                    """)[0][0]
+        except IndexError:
+            print(f"Предмет {thing_name} не имеет текстуры")
 
     def request(self, txt):
         con = sqlite3.connect(self.name)
@@ -61,3 +68,5 @@ class DBManager:
         con.commit()
         con.close()
         return res
+d = DBManager("Game1.db")
+d.get_img("Jnkjn")
