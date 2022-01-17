@@ -4,9 +4,6 @@ import MainMenuWindows
 
 import configparser
 
-class Map():
-    pass
-
 
 class SceneManager:
     def __init__(self, screen):
@@ -132,23 +129,6 @@ class GameScene(Scene):
 
 class FinalScene(Scene):
     pass
-
-
-class Player(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.radius = 10
-        self.speed = 5
-        self.image = pygame.Surface((2 * self.radius, 2 * self.radius),
-                                    pygame.SRCALPHA, 32)
-        pygame.draw.circle(self.image, pygame.Color("red"),
-                           (self.radius, self.radius), self.radius)
-        print(22222222)
-
-    def upd(self, events):
-        for event in events:
-            print(event.type)
-
 
 
 

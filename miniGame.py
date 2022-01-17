@@ -122,25 +122,3 @@ class MiniGameScene(main.Scene):
                             self.b_player.num_arrows -= 1
                     self.ttv = 0
 
-
-class App():
-    def __init__(self):
-        pygame.init()
-
-        self.screen = pygame.display.set_mode((1920, 1080))
-        self.o = MiniGameScene(self.screen)
-        self.clock = pygame.time.Clock()
-
-    def run(self):
-        while True:
-            time_delta = self.clock.tick(60) / 1000.0
-            self.o.event_handle(pygame.event.get())
-            self.o.update(time_delta)
-            self.o.draw()
-            pygame.display.update()
-            pygame.display.flip()
-
-
-if __name__ == '__main__':
-    app = App()
-    app.run()
