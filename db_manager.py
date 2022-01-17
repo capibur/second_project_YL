@@ -53,6 +53,7 @@ class DBManager:
 
     def complete(self, achievement):
         self.request(f"""UPDATE achievement_list SET achieved = 0 WHERE name = "{achievement}" """)
+
     def get_img(self, thing_name):
         try:
             return self.request(f"""               
@@ -68,5 +69,5 @@ class DBManager:
         con.commit()
         con.close()
         return res
-d = DBManager("Game1.db")
-d.get_img("Jnkjn")
+
+
