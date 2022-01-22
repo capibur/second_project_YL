@@ -8,6 +8,7 @@ import go_snene
 import db_manager
 import sounds_game
 import configparser
+
 DBMANGER = db_manager.DBManager("Game1.db")
 all_sprites = pygame.sprite.Group()
 enemy_sprites = pygame.sprite.Group()
@@ -102,6 +103,8 @@ def work_with_photoes(name):
             animations[i] = cut_sheet(animations[i], animations[i].get_width() // TILE_SIZE,
                                       animations[i].get_height() // TILE_SIZE)
     return animations
+
+
 def next_level(level_now, scene_manager, hp, inventory, num, save_name, name):
     all_sprites.empty()
     enemy_sprites.empty()
@@ -136,7 +139,9 @@ def next_level(level_now, scene_manager, hp, inventory, num, save_name, name):
     elif d_lvl[level_now] == "mini_game":
         scene_manager.set_mini_game(save_name, name)
     else:
-        scene_manager.change_scene(go_snene.FinalSene(SCREEN, record[1], record[0],  scene_manager=scene_manager))
+        scene_manager.change_scene(go_snene.FinalSene(SCREEN, record[1], record[0], scene_manager=scene_manager))
+
+
 def death(scene_mg, save_name):
     all_sprites.empty()
     enemy_sprites.empty()
@@ -447,12 +452,14 @@ def path(end, map, now_level, previous_level):
 
         return step
 
+
 class Game:
     def __init__(self, map, hero, enemies, chests, out, key, door, save_name, name, scene):
         self.map, self.hero, self.enemies, self.chests, self.out, self.key, self.door = map, hero, enemies, chests, out, key, door
         self.save_name = save_name
         self.name = name
         self.scene = scene
+
     def update_hero(self, next_x, next_y):
         was_x, was_y = self.hero.get_position()
         if self.map.is_free((was_x + next_x, was_y + next_y)):
@@ -481,7 +488,7 @@ class Game:
                                inventory=self.hero.inventory,
                                save_name=self.save_name,
                                name=self.name,
-                               num = self.scene.murders)
+                               num=self.scene.murders)
                     # конец уровня
             end_x, end_y = self.hero.get_position()
             for enemy in self.enemies:
@@ -502,27 +509,19 @@ class Game:
                             enemy.set_position((start_x + next_x, start_y + next_y))
 
 
-
-
-
-
-
-
 class HPBar:
     def __init__(self, hp):
         self.hp_now = hp
+
     def set_hp(self, hp):
         self.hp_now = hp
+
     def draw(self):
         hp_slots = self.hp_now // 10
         y = 1050
         for i in range(hp_slots):
-            pygame.draw.rect(SCREEN_INTERFACE, (255,0,20), (0, y, 60, 30))
+            pygame.draw.rect(SCREEN_INTERFACE, (255, 0, 20), (0, y, 60, 30))
             y -= 35
-
-
-
-
 
 
 class Inventory:
@@ -535,30 +534,34 @@ class Inventory:
             "2": "",
             "3": "",
             "4": "",
-            "5": "",}
+            "5": "", }
         for i, j in enumerate(self.inv_content):
             self.inv_slots[str(i)] = j
+
     def draw(self):
         x = 1800
         for i in range(6):
             if i == self.selected_th:
-                pygame.draw.rect(SCREEN_INTERFACE,(45,12,0), (x, 960, 120, 120), 5 )
+                pygame.draw.rect(SCREEN_INTERFACE, (45, 12, 0), (x, 960, 120, 120), 5)
             else:
                 pygame.draw.rect(SCREEN_INTERFACE, (45, 12, 233), (x, 960, 120, 120), 5)
             if self.inv_slots[str(i)]:
-
                 img = db_manager.DBManager.get_img(db_manager.DBManager("Game1.db"), self.inv_slots[str(i)])
 
                 SCREEN_INTERFACE.blit(pygame.image.load(img), pygame.Rect((x, 960), (120, 120)))
             x -= 120
+
     def get_select(self):
         return self.inv_slots[str(self.selected_th)]
+
     def set_select(self, num):
         self.selected_th = num
+
     def update(self, thing):
         self.inv_content.append(thing)
         for i, j in enumerate(self.inv_content):
             self.inv_slots[str(i)] = j
+
     def delete_thing(self):
         self.inv_slots[str(self.selected_th)] = ""
         self.inv_content.clear()
@@ -566,12 +569,8 @@ class Inventory:
             if i != "":
                 self.inv_content.append(i)
 
-
         for i, j in enumerate(self.inv_content):
             self.inv_slots[str(i)] = j
-
-
-
 
 
 class GameScene:
@@ -596,10 +595,12 @@ class GameScene:
 
         self.camera = Camera()
         self.clock = pygame.time.Clock()
-        self.game = Game(self.map, self.hero, self.enemies, self.chests, self.out, self.key, self.door, save_name, name, self)
+        self.game = Game(self.map, self.hero, self.enemies, self.chests, self.out, self.key, self.door, save_name, name,
+                         self)
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
         self.sounds = sounds_game.GameSounds(float(self.config["SETTING"]["Sound"]))
+
     def update(self, time_delta):
         self.camera.update(self.hero)
         for sprite in all_sprites:
@@ -627,4 +628,3 @@ class GameScene:
                 self.inventory.set_select(event.key - 49)
             elif event.key == 55:
                 self.inventory.delete_thing()
-
