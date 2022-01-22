@@ -2,7 +2,45 @@ import pygame
 import pygame_gui
 from db_manager import DBManager
 import configparser
+class NewGameWindow:
+    def __init__(self, manager):
+        self.manager = manager
+        self.size = (480, 300)
+        self.window = pygame_gui.elements.UIWindow(
+            manager=self.manager,
+            rect=pygame.Rect((420, 180), self.size))
+        self.window.set_blocking(True)
+        s = pygame.Surface((480,850))
+        s.fill((150,75,0))
 
+        pygame_gui.elements.UILabel(
+            manager=self.manager,
+            container=self.window,
+            relative_rect=pygame.Rect((165, 0), (120, 80)),
+            text="Your Name"
+        )
+        self.name  = pygame_gui.elements.UITextEntryLine(
+            manager=self.manager,
+            relative_rect= pygame.Rect((115, 66),(210,40)),
+            container=self.window
+        )
+        pygame_gui.elements.UILabel(
+            manager=self.manager,
+            container=self.window,
+            relative_rect=pygame.Rect((165, 115), (120, 15)),
+            text="Save"
+        )
+        self.save_name = self.text_l = pygame_gui.elements.UITextEntryLine(
+            manager=self.manager,
+            relative_rect= pygame.Rect((115, 140),(210,40)),
+            container=self.window
+        )
+        self.btn_start = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((125, 190), (190, 50)),
+            text="start",
+            manager=self.manager,
+            container=self.window
+        )
 class AchievementWindow:
     def __init__(self, manager):
         self.manager = manager
@@ -14,8 +52,6 @@ class AchievementWindow:
         s = pygame.Surface((480,850))
         s.fill((150,75,0))
         self.window.image = s
-
-        pygame_gui.elements.UITextBox
         a = DBManager.request(DBManager("Game1.db"),
                               """SELECT * FROM achievement_list"""
                               )
@@ -48,7 +84,7 @@ class AchievementWindow:
                 manager=self.manager,
                 relative_rect=pygame.Rect((350, hight), (100, 100)),
                 container=self.window,
-                text="test",
+                text="info",
                 tool_tip_text=i[3])
             hight += 100
 
@@ -62,9 +98,9 @@ class SettingWindow:
         self.window = pygame_gui.elements.UIWindow(
             manager=self.manager,
             rect=pygame.Rect((420, 180), self.size))
-        s = pygame.Surface((720,720))
-        s.fill((150,75,0))
-        self.window.image = s
+        bg = pygame.Surface((720,720))
+        bg.fill((150,75,0))
+        self.window.image = bg
         self.window.set_blocking(True)
         self.mus_lable = pygame_gui.elements.UIImage(
             manager=self.manager,
@@ -96,3 +132,44 @@ class SettingWindow:
         )
 
 
+class SavesWindow:
+    def __init__(self, manager):
+        self.manager = manager
+        self.size = (380, 850)
+        self.window = pygame_gui.elements.UIWindow(
+            manager=self.manager,
+            rect=pygame.Rect((430, 180), self.size))
+        self.window.set_blocking(True)
+        s = pygame.Surface((380,850))
+        s.fill((150,75,0))
+        self.window.image = s
+
+        pygame_gui.elements.UITextBox
+        a = DBManager.request(DBManager("Game1.db"),
+                              """SELECT * FROM save_list"""
+                              )
+        self.saves_btns = []
+        self.load_svs(a)
+    def load_svs(self, a):
+        hight = 0
+        for i in a:
+            pygame_gui.elements.UILabel(
+                manager=self.manager,
+                relative_rect=pygame.Rect((0, hight), (150, 100)),
+                container=self.window,
+                text=str(i[3])
+            )
+            pygame_gui.elements.UILabel(
+                manager=self.manager,
+                relative_rect=pygame.Rect((150, hight), (100, 100)),
+                container=self.window,
+                text=str(i[1])
+            )
+
+            save_btn = pygame_gui.elements.UIButton(
+                manager=self.manager,
+                relative_rect=pygame.Rect((250, hight), (100, 100)),
+                container=self.window,
+                text=str(i[3]),)
+            self.saves_btns.append(save_btn)
+            hight += 100

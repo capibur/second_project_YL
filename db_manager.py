@@ -5,14 +5,19 @@ class DBManager:
     def __init__(self, name):
         self.name = name
 
-    def set_saves(self, location, inventory: list, save_name, morders,score):
+    def set_saves(self, location, inventory: list, save_name, murders,score, player_name):
         self.request(f"""
-        INSERT INTO save_list ( location, save_date, save_name, morders, score)
-        VALUES ("{location}", date('now','localtime'), "{save_name}"), {morders}, {score};""")
-        for thing in inventory:
-            self.request(f"""
-                    INSERT INTO in_game (name, save)
-                    VALUES ("{thing.get_name(thing)}", "{save_name}");""")
+        INSERT INTO save_list ( location, save_date, save_name, murders, score,player_name)
+        VALUES ("{location}", date('now','localtime'), "{save_name}", {murders}, {score}, "{player_name}")""")
+        if inventory:
+            for thing in inventory:
+                self.request(f"""
+                        INSERT INTO in_game (name, save)
+                        VALUES ("{thing.get_name(thing)}", "{save_name}");""")
+    def append_thing(self, thing, save_name):
+        self.request(f"""INSERT INTO in_game (name, save)
+                         VALUES ("{thing}", "{save_name}");
+                     """)
 
     def get_saves(self, save_name, mode=False):  # при mode = true возвращается словарь с характеристиками
         inventory = [i[0] for i in self.request(f"""               
@@ -28,17 +33,16 @@ class DBManager:
             return self.get_spec(inventory), location
 
     def get_spec(self, thing_names):  # возвращает характеристики
-        res = dict()
-        for i in thing_names:
-            date_thing = self.request(f"""               
-                    SELECT * FROM things WHERE name = "{i}"
-                    """)
-            print(date_thing)
-            if date_thing:
-                res[date_thing[0][1]] = {"dmg": date_thing[0][2], "prt": date_thing[0][2], "descr": date_thing[0][2]}
+        res = {"dmg": 0, "prt": 0, "descr": 0}
+        date_thing = self.request(f"""               
+                SELECT * FROM things WHERE name = "{thing_names}"
+                """)
+        print(date_thing)
+        if date_thing:
+            res = {"dmg": date_thing[0][2], "prt": date_thing[0][2], "descr": date_thing[0][2]}
         return res
 
-    def get_records(self):
+    def get_records(self, name=False):
         records_dict = dict()
         records_list = self.request(f""" SELECT * FROM record_list""")
         for i in records_list:
@@ -48,16 +52,17 @@ class DBManager:
     def set_records(self, score, murders, n):
         self.request(f"""
         INSERT INTO record_list(name, murders, score)
-        VALUES("{n}", {murders}, {score})
-                    """)
+        VALUES("{n}", {murders}, {score})""")
+    def update_records(self, score, murders, n):
+        self.request(f"""UPDATE record_list SET score = {score}, murders = {murders}  WHERE name = "{n}" """)
 
     def complete(self, achievement):
-        self.request(f"""UPDATE achievement_list SET achieved = 0 WHERE name = "{achievement}" """)
+        self.request(f"""UPDATE achievement_list SET achieved = 1 WHERE name = "{achievement}" """)
 
     def get_img(self, thing_name):
         try:
             return self.request(f"""               
-                    SELECT * FROM things WHERE name = "{thing_name}"
+                    SELECT img FROM things WHERE name = "{thing_name}"
                     """)[0][0]
         except IndexError:
             print(f"Предмет {thing_name} не имеет текстуры")
