@@ -111,16 +111,16 @@ def next_level(level_now, scene_manager, hp, inventory, num, save_name, name):
     key_sprites.empty()
     active_objects.empty()
     db_m = db_manager.DBManager("Game1.db")
-    d_lvl = {"level_1": "level_4",
+    d_lvl = {"level_1": "mini_game",
              "level_2": "level_3",
              "level_3": "level_4",
              "level_4": False}
     record = db_m.request(f"""
-    SELECT murders FROM record_list WHERE name = "{name}" """)[0][0]
+    SELECT murders, score FROM record_list WHERE name = "{name}" """)[0]
 
     if d_lvl[level_now] and d_lvl[level_now] != "mini_game":
         db_m.update_records(score=2,
-                            murders=record + num,
+                            murders=record[0] + num,
                             n=name, )
 
         text = f"""UPDATE save_list 
@@ -136,7 +136,7 @@ def next_level(level_now, scene_manager, hp, inventory, num, save_name, name):
     elif d_lvl[level_now] == "mini_game":
         scene_manager.set_mini_game(save_name, name)
     else:
-        scene_manager.change_scene(go_snene.FinalSene(SCREEN, 122, record, 222, scene_manager=scene_manager))
+        scene_manager.change_scene(go_snene.FinalSene(SCREEN, record[1], record[0],  scene_manager=scene_manager))
 def death(scene_mg, save_name):
     all_sprites.empty()
     enemy_sprites.empty()
@@ -487,8 +487,8 @@ class Game:
             for enemy in self.enemies:
                 start_x, start_y = enemy.get_position()
                 hero_x, hero_y = self.hero.get_position()
-                if abs(hero_x - start_x) <= WINDOW_SIZE[0] // TILE_SIZE and abs(hero_y - start_y) <= WINDOW_SIZE[
-                    1] // TILE_SIZE:
+                if abs(hero_x - start_x) <= WINDOW_SIZE[0] // TILE_SIZE // 2 and abs(hero_y - start_y) <= WINDOW_SIZE[
+                    1] // TILE_SIZE // 2:
                     if (start_x - end_x) ** 2 + (start_y - end_y) ** 2 <= enemy.attack_range ** 2:
                         new_x, new_y = path((end_x, end_y), self.map, {(start_x, start_y)}, [])
                         if new_x != start_x or new_y != start_y:

@@ -76,7 +76,9 @@ class MainMenuScene():
                     save_name=event.ui_element.text
                 )
                 self.scene_manager.change_scene(Test_1.GameScene(level=res[1],
-                                                                 scene_manager=self.scene_manager,))
+                                                                 scene_manager=self.scene_manager,
+                                                                 save_name=event.ui_element.text, name=res[2]))
+
             elif event.ui_element == self.btn_mute:
                 self.sound_state = not self.sound_state
                 if not self.sound_state:

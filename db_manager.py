@@ -20,17 +20,23 @@ class DBManager:
                      """)
 
     def get_saves(self, save_name, mode=False):  # при mode = true возвращается словарь с характеристиками
-        inventory = [i[0] for i in self.request(f"""               
-        SELECT name FROM in_game WHERE save = "{save_name}"
-        """)]
-        location = self.request(f"""               
-        SELECT location FROM save_list WHERE save_name = "{save_name}"
-        """)[0][0]
-        if not mode:
-            return inventory, location
-        else:
-            print(inventory)
-            return self.get_spec(inventory), location
+        if save_name:
+            print(f'{save_name}         fcedfc vedf')
+            inventory = [i[0] for i in self.request(f"""               
+            SELECT name FROM in_game WHERE save = "{save_name}"
+            """)]
+            name = self.request(f"""               
+            SELECT player_name FROM save_list WHERE save_name = "{save_name}"
+            """)[0][0]
+            location = self.request(f"""               
+            SELECT location FROM save_list WHERE save_name = "{save_name}"
+            """)[0][0]
+
+            if not mode:
+                return  inventory, location, name
+            else:
+                print(inventory)
+                return self.get_spec(inventory), location
 
     def get_spec(self, thing_names):  # возвращает характеристики
         res = {"dmg": 0, "prt": 0, "descr": 0}

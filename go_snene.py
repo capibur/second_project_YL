@@ -3,7 +3,7 @@ import db_manager
 import configparser
 import sounds_game
 class FinalSene:
-    def __init__(self, screen, score, murders, coins, scene_manager):
+    def __init__(self, screen, score, murders,  scene_manager):
         self.config = configparser.ConfigParser()
         self.config.read('config.ini')
         pygame.mixer.music.load("assets\\app_assets\\bg_menu.mp3")
@@ -55,17 +55,19 @@ class FinalSene:
                 self.screen.blit(self.f3.render("achievements -", False,
                                                 (255, 215, 0)), (420, 500))
                 self.screen.blit(self.f3.render(str(self.achievements), False,
-                                                (255, 215, 0)), (760, 500))
+                                                (255, 215, 0)), (800, 500))
                 self.a += 1
             elif self.a == 2:
-                self.screen.blit(self.f3.render("time -", False,
+                self.screen.blit(self.f3.render("score -", False,
                                                 (50, 100, 100)), (420, 600))
-                self.screen.blit(self.f3.render(str(self.murders), False,
+                self.screen.blit(self.f3.render(str(self.score), False,
                                                 (50, 100, 100)), (760, 600))
                 self.a += 1
             elif self.a == 3:
                 self.screen.blit(self.f2.render("All Score -", False,
                                                 (18, 10, 143)), (930, 730))
+                self.screen.blit(self.f2.render(str((self.score + 1)*(self.murders+1)*(self.achievements + 1)), False,
+                                                (50, 100, 100)), (1300, 730))
                 self.a += 1
             elif self.a == 9:
                 self.screen.blit(self.f3.render("Press esc", False,
