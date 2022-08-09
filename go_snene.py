@@ -23,15 +23,15 @@ class FinalSene:
         self.f3 = pygame.font.Font('assets\\font\\GorgeousPixel.ttf', 50)
 
     def achivment(self):
-        if self.murders == 0 and not self.db_mng.request(
+        if self.murders == 0 and self.db_mng.request(
                 """SELECT achieved FROM achievement_list WHERE name = "Гетте во плоти" """)[0][0]:
             self.db_mng.complete('Гетте во плоти')
             self.achievements += 1
-        if self.murders >= 20 and not self.db_mng.request(
+        if self.murders >= 20 and self.db_mng.request(
                 """SELECT achieved FROM achievement_list WHERE name = "Кто украл мою собаку?" """)[0][0]:
             self.db_mng.complete("Кто украл мою собаку?")
             self.achievements += 1
-        if self.score >= 300 and not self.db_mng.request(
+        if self.score >= 300 and self.db_mng.request(
                 """SELECT achieved FROM achievement_list WHERE name = "Странные склонности" """)[0][0]:
             self.db_mng.complete("Странные склонности")
             self.achievements += 1

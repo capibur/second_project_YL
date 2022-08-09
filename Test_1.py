@@ -404,7 +404,7 @@ class Exit(pygame.sprite.Sprite):
     def __init__(self, position, name):
         self.image = load_image(name + '.png', -1)
         super().__init__(all_sprites, active_objects, exit_sprites)
-        self.x, self.y = position
+        self.x, self.y = 0,0
         self.rect = self.image.get_rect().move(60 * self.x, 60 * self.y)
 
     def get_position(self):
